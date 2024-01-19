@@ -44,14 +44,28 @@ class WeatherViewController: UIViewController {
     
     @IBAction func loadWeather(_ sender: Any?) {
         self.activityIndicator.startAnimating()
+        
+        let dispatchGroup = DispatchGroup()
+        
+        var weatherResponse: Result<Response, WeatherError>? = nil
+        var disasterResponse: String? = nil
+        
+        dispatchGroup.enter()
         weatherModel.fetchWeather(at: "tokyo", date: Date()) { result in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.handleWeather(result: result)
-            }
+            weatherResponse = result
+            dispatchGroup.leave()
         }
+        
+        dispatchGroup.enter()
         disasterModel.fetchDisaster { (disaster) in
-            self.disasterLabel.text = disaster
+            disasterResponse = disaster
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            self.activityIndicator.stopAnimating()
+            self.handleWeather(result: weatherResponse!)
+            self.disasterLabel.text = disasterResponse!
         }
     }
     
