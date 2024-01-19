@@ -83,10 +83,11 @@ class WeatherViewController: UIViewController {
                 message = "Jsonエンコードに失敗しました。"
             case .jsonDecodeError:
                 message = "Jsonデコードに失敗しました。"
+            case .networkError:
+                message = "通信に失敗しました。"
             case .unknownError:
                 message = "エラーが発生しました。"
             }
-            
             let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "OK", style: .default) { _ in
                 self.dismiss(animated: true) {
